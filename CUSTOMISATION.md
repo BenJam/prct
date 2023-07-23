@@ -4,7 +4,7 @@ This app uses Open Source code, which can be freely forked, and online hosting s
 
 Setting up your own copy does require some software skills. Reach out to [Mark Fairhurst](mailto:mark@fairhursts.net) if you need assistance.
 
-The following third party services are necessary to host and run the app:
+The following third-party services are necessary to host and run the app:
 
 | Service                                 | Description                | Free Tier                                                                                                             |
 | --------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -22,7 +22,7 @@ Fork this repo to your own GitHub account. The app is written in TypeScript and 
 
 ### Auth0
 
-Sign up for a free Auth0 account and create a new Auth0 app with your club logo and `http://localhost:3000` as the allowed login, logout, callback and origins url.
+Sign up for a free Auth0 account and create a new Auth0 app with your club logo and `http://localhost:3000` as the allowed login, logout, callback (~/api/auth/callback/auth0, ~/api/auth/signin) and origins URLs.
 
 Style the login page with your club colours if desired. Copy the generated Client ID and Secret and add them to a `.env` file in code. (You will also need to set them in Vercel later).
 
@@ -35,13 +35,15 @@ AUTH0_CLIENT_ID={GENERATED_IN_AUTH0_DASHBOARD}
 AUTH0_CLIENT_SECRET={GENERATED_IN_AUTH0_DASHBOARD}
 ```
 
+Note that URLs need to be full https:// urls.
+
 ### PlanetScale
 
-Create a free account and in it, your rides database. Copy the database connection url and credentials:
+Create a free account and in it, your rides database (called bcc-rides). Copy the database connection url and credentials:
 
 ```bash
 # Prisma
-DATABASE_URL=mysql://127.0.0.1:3309/rides  # Or whatever you named your database
+DATABASE_URL='mysql://{GENERATED_IN_PLANETSCALE_DASHBOARD}:{GENERATED_IN_PLANETSCALE_DASHBOARD}@aws.connect.psdb.cloud/bcc-rides?sslaccept=strict'
 
 # PlanetScale database http connection
 DATABASE_HOST={GENERATED_IN_PLANETSCALE_DASHBOARD}
@@ -49,7 +51,7 @@ DATABASE_USERNAME={GENERATED_IN_PLANETSCALE_DASHBOARD}
 DATABASE_PASSWORD={GENERATED_IN_PLANETSCALE_DASHBOARD}
 ```
 
-Follow instructions on the PlanetScale site for installing the [pscale CLI tool](https://planetscale.com/features/cli), which you will need to connect to your database for development. Although you can use SQLite for development, PlanetScale will only allow schema changes and deploys to a non-production database branch, once you are in production mode. You must then use their UI to deploy to the main branch.
+Follow the instructions on the PlanetScale site for installing the [pscale CLI tool](https://planetscale.com/features/cli), which you will need to connect to your database for development. Although you can use SQLite for development, PlanetScale will only allow schema changes and deploys to a non-production database branch, once you are in production mode. You must then use their UI to deploy to the main branch.
 
 Once the database tables are created and seeded (see later) you can optionally connect a GUI tool for management.
 
@@ -57,7 +59,7 @@ Once the database tables are created and seeded (see later) you can optionally c
 
 _(Note: Park this step until the app is working in development first)._
 
-Create a project for this app and connect it to your Github account, to track your forked copy of this repo. Each push to Github will result in a build and deploy attempt. The production domain reflects your master branch; pushes to other branches will create preview instances.
+Create a project for this app and connect it to your GitHub account, to track your forked copy of this repo. Each push to Github will result in a build and deploy attempt. The production domain reflects your master branch; pushes to other branches will create preview instances.
 
 You will need to set up environmental variables. Visit:
 
@@ -67,7 +69,7 @@ https://vercel.com/{github_id}/{project}/settings/environment-variables
 
 ..and add every variable listed in `.env.example`. It is safe to give all variables `Production` and `Preview` scope.
 
-Once you have a production hosting url from Vercel (you can optionally link it to a custom domain that you own), go back to Auth0 and add the production urls to all of the login/callback, etc. origins.
+Once you have a production hosting URL from Vercel (you can optionally link it to a custom domain that you own), go back to Auth0 and add the production URLs in addition to the local URLs for the login, callback, origins, etc.
 
 ## Getting Started
 
