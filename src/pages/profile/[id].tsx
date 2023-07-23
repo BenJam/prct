@@ -108,7 +108,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  // FIXME: Block if user is not an admin - or leave to api
   const user = await getProfileForUser(userId);
 
   return {

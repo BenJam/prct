@@ -27,8 +27,6 @@ const createRidesForMonth = async (
   try {
     const date = req.body;
 
-    // TODO: Test that date is in the future
-
     // A user can only add themselves; a leader can add other riders
     const hasLeaderRole = await isLeader(req, res);
 

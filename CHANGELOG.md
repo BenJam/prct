@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.20.3] - TBD
+
+### Added
+
+- Added RepeatingRide table, to hold scheduled ride templates
+- Added optional scheduleId column to Rides, to denote that they are instances of a repeating ride
+
 ## [1.20.2] - 2023-07-05
 
 ### Changed

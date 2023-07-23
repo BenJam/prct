@@ -3,7 +3,7 @@ import Head from "next/head";
 import Error from "next/error";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/api/auth/[...nextauth]";
+import { authOptions } from "@api/auth/[...nextauth]";
 import { env } from "../../../env/client.mjs";
 import { useRide } from "../../../hooks";
 import {

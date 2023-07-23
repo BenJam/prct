@@ -19,6 +19,7 @@ export * from "./LogoutIcon";
 export * from "./MessageIcon";
 export * from "./PhoneIcon";
 export * from "./PlusIcon";
+export * from "./RepeatIcon";
 export * from "./SettingsIcon";
 export * from "./TickIcon";
 export * from "./UsersIcon";

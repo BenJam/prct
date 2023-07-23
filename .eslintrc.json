@@ -64,5 +64,6 @@
       "error",
       { "argsIgnorePattern": "^_" }
     ]
-  }
+  },
+  "ignorePatterns": ["*.test.ts", "**/*.config.js"]
 }

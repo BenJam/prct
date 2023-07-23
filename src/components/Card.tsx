@@ -20,7 +20,9 @@ export const Card: React.FC<Props> = ({ ride, user }: Props) => {
     ride;
   const isNotReady = !isReady(ride);
 
-  const details = destination ? `${destination} - ${distance}` : `${distance}`;
+  const details = destination
+    ? `${destination} - ${distance || ""}`
+    : `${distance || ""}`;
 
   const targetUrl =
     router.pathname === "/embed"

@@ -8,39 +8,33 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useSWRConfig } from "swr";
 import { authOptions } from "@api/auth/[...nextauth]";
-import { Confirm, RideForm } from "../../components";
-import { addRide, addRepeatingRide, generateRides } from "../../hooks";
+import { Confirm, RideForm } from "src/components";
+import { formatFormDate, formatDate, getNow } from "@utils/dates";
+import { addRepeatingRide, addRide, generateRides } from "src/hooks";
 import {
-  formatUserName,
-  flattenQuery,
   serialiseUser,
-  rruleDay,
-  formatFormDate,
-  formatDate,
   makeRide,
   makeRepeatingRide,
   makeRidesInPeriod,
   repeatingRideToDb,
-} from "../../../shared/utils";
-import { Preferences, RideFormValues, User } from "../../types";
+  flattenArrayNumber,
+} from "shared/utils";
+import { Preferences, RepeatingRide, RideFormValues, User } from "src/types";
+import { getRepeatingRide } from "@api/repeating-ride";
 
 type Props = {
+  repeatingRide: RepeatingRide;
   user: User;
 };
 
-const AddRide: NextPage<Props> = ({ user }: Props) => {
+const CopyRepeatingRide: NextPage<Props> = ({ repeatingRide, user }: Props) => {
   const preferences = user?.preferences as Preferences;
   const { mutate } = useSWRConfig();
   const router = useRouter();
-  const {
-    query: { date: queryDate },
-  } = router;
   const [waiting, setWaiting] = useState(false);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [rideDateList, setRideDateList] = useState<string[]>([]);
   const [scheduleId, setScheduleId] = useState<string | null>(null);
-  const dateString = flattenQuery(queryDate);
-  const defaultFrequency = 2; // Weekly
 
   const show = () => setShowCreate(true);
   const hide = () => {
@@ -63,25 +57,27 @@ const AddRide: NextPage<Props> = ({ user }: Props) => {
 
   // Initial state for form: set name, leader and time
   const defaultValues = {
-    name: "",
-    date: dateString,
+    name: repeatingRide.name,
+    freq: repeatingRide.freq,
+    date: formatFormDate(getNow()),
+    startDate: repeatingRide.startDate,
+    endDate: repeatingRide.endDate
+      ? formatFormDate(repeatingRide.endDate)
+      : undefined,
     time: "08:30",
-    group: "",
-    destination: "",
-    meetPoint: "Brunel Square",
-    distance: 0,
-    leader: formatUserName(user.name),
-    route: "",
-    notes: "",
-    // Repeats
-    interval: 1,
-    freq: defaultFrequency,
-    startDate: formatFormDate(),
-    until: undefined,
-    winterStartTime: "08:30", // Update when time changes
-    byweekday: rruleDay(), // Only set if displayed!
-    bysetpos: rruleDay(), // Only set if displayed!
-    bymonthday: undefined, // Only set if displayed!
+    winterStartTime: "08:30",
+    // Cast potentially nullish values as empty
+    group: repeatingRide.group || "",
+    destination: repeatingRide.destination || "",
+    meetPoint: repeatingRide.meetPoint || "",
+    notes: repeatingRide.notes || "",
+    leader: repeatingRide.leader || "",
+    route: repeatingRide.route || "",
+    distance: repeatingRide.distance || 1,
+    // Cast arrays o rnumbers to strongs for form
+    byweekday: flattenArrayNumber(repeatingRide.byweekday),
+    bysetpos: flattenArrayNumber(repeatingRide.bysetpos),
+    bymonthday: flattenArrayNumber(repeatingRide.bymonthday),
   };
 
   const createRide: SubmitHandler<RideFormValues> = async (formData) => {
@@ -114,6 +110,8 @@ const AddRide: NextPage<Props> = ({ user }: Props) => {
         if (rideDates.length > 0) {
           setRideDateList(rideDates);
           show();
+        } else {
+          router.push("/");
         }
       }
     } catch (err) {
@@ -165,6 +163,7 @@ const AddRide: NextPage<Props> = ({ user }: Props) => {
           isAdmin={isAdmin}
           watch={watch}
           setValue={setValue}
+          isRepeating
         />
       </div>
 
@@ -184,7 +183,7 @@ const AddRide: NextPage<Props> = ({ user }: Props) => {
   );
 };
 
-export default AddRide;
+export default CopyRepeatingRide;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -192,7 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // @ts-ignore session user complains
   const user = serialiseUser(session?.user);
   const role = user?.role;
-  const isAuthorised = !!session && role && ["LEADER", "ADMIN"].includes(role);
+  const isAuthorised = !!session && role === "ADMIN";
 
   if (!isAuthorised) {
     return {
@@ -203,8 +202,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const { query } = context;
+  const repeatingRide = await getRepeatingRide(query.id);
+
   return {
     props: {
+      repeatingRide,
       user,
     },
   };

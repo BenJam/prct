@@ -20,6 +20,7 @@ import {
   SettingsIcon,
   CircleExclamationIcon,
   UsersIcon,
+  RepeatIcon,
 } from "../Icon";
 import { MenuEntry } from "./MenuEntry";
 import pkg from "../../../package.json";
@@ -170,9 +171,18 @@ export const UserMenu = ({ role, rideId, isAuthenticated }: MenuProps) => {
           )}
 
           {isAdmin && (
-            <MenuEntry label="Manage Users" href="/users" onClick={closeMenu}>
-              <UsersIcon className="fill-neutral-700" />
-            </MenuEntry>
+            <>
+              <MenuEntry label="Manage Users" href="/users" onClick={closeMenu}>
+                <UsersIcon className="fill-neutral-700" />
+              </MenuEntry>
+              <MenuEntry
+                label="Repeating Rides"
+                href="/repeating-rides"
+                onClick={closeMenu}
+              >
+                <RepeatIcon className="fill-neutral-700" />
+              </MenuEntry>
+            </>
           )}
           {isAuthenticated && (
             <>

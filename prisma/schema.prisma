@@ -1,8 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -87,9 +86,29 @@ model Ride {
   users       UsersOnRides[] @relation("usersOnRides_ride")
   deleted     Boolean        @default(false)
   cancelled   Boolean        @default(false)
+  scheduleId  String? // Present if an instance of Repeating Ride
   createdAt   DateTime       @default(now())
 
   @@index([date, deleted])
+}
+
+model RepeatingRide {
+  id              String   @id @default(cuid())
+  name            String
+  schedule        String // RRule
+  winterStartTime String?
+  group           String?
+  destination     String?
+  distance        Int?
+  meetPoint       String?
+  route           String?
+  leader          String?
+  notes           String?  @db.Text
+  speed           Int?
+  limit           Int      @default(-1)
+  createdAt       DateTime @default(now())
+
+  @@index([id])
 }
 
 model UsersOnRides {

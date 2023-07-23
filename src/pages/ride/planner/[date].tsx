@@ -2,7 +2,7 @@ import type { NextPage, GetServerSideProps } from "next";
 import Head from "next/head";
 import Error from "next/error";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/api/auth/[...nextauth]";
+import { authOptions } from "@api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { env } from "../../../env/client.mjs";

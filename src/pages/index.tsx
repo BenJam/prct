@@ -4,7 +4,7 @@ import Error from "next/error";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/api/auth/[...nextauth]";
+import { authOptions } from "@api/auth/[...nextauth]";
 import { env } from "../env/client.mjs";
 import { useRides, useLocalStorage } from "../hooks";
 import { RideGroup, RideGroupSkeleton, Filters } from "../components";
